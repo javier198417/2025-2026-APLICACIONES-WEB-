@@ -1,0 +1,15 @@
+c:\Users\JAVIER\Desktop\semana 6 estructura\ejercicio2\obj\Debug\net10.0\ejercicio2.GeneratedMSBuildEditorConfig.editorconfig
+c:\Users\JAVIER\Desktop\semana 6 estructura\ejercicio2\obj\Debug\net10.0\ejercicio2.AssemblyInfoInputs.cache
+c:\Users\JAVIER\Desktop\semana 6 estructura\ejercicio2\obj\Debug\net10.0\ejercicio2.AssemblyInfo.cs
+c:\Users\JAVIER\Desktop\semana 6 estructura\ejercicio2\obj\Debug\net10.0\ejercicio2.csproj.CoreCompileInputs.cache
+c:\Users\JAVIER\Desktop\semana 6 estructura\ejercicio2\obj\Debug\net10.0\ejercicio2.sourcelink.json
+c:\Users\JAVIER\Desktop\semana 6 estructura\ejercicio2\bin\Debug\net10.0\ejercicio2.exe
+C:\Users\JAVIER\Desktop\semana 6 estructura\ejercicio2\bin\Debug\net10.0\ejercicio2.deps.json
+C:\Users\JAVIER\Desktop\semana 6 estructura\ejercicio2\bin\Debug\net10.0\ejercicio2.runtimeconfig.json
+c:\Users\JAVIER\Desktop\semana 6 estructura\ejercicio2\bin\Debug\net10.0\ejercicio2.dll
+c:\Users\JAVIER\Desktop\semana 6 estructura\ejercicio2\bin\Debug\net10.0\ejercicio2.pdb
+c:\Users\JAVIER\Desktop\semana 6 estructura\ejercicio2\obj\Debug\net10.0\ejercicio2.dll
+c:\Users\JAVIER\Desktop\semana 6 estructura\ejercicio2\obj\Debug\net10.0\refint\ejercicio2.dll
+c:\Users\JAVIER\Desktop\semana 6 estructura\ejercicio2\obj\Debug\net10.0\ejercicio2.pdb
+C:\Users\JAVIER\Desktop\semana 6 estructura\ejercicio2\obj\Debug\net10.0\ejercicio2.genruntimeconfig.cache
+C:\Users\JAVIER\Desktop\semana 6 estructura\ejercicio2\obj\Debug\net10.0\ref\ejercicio2.dll
