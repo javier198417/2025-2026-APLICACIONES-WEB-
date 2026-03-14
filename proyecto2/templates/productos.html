@@ -1,30 +1,46 @@
 {% extends "base.html" %}
-
-{% block title %}Productos (SQLite){% endblock %}
-
 {% block content %}
-<h1>Gestión de Productos con SQLite + SQLAlchemy</h1>
-
-<a href="/producto/nuevo" class="btn btn-primary">➕ Nuevo Producto</a>
-
-<div class="productos-grid">
-    {% if productos %}
-        {% for producto in productos %}
-        <div class="producto-card">
-            <h3>{{ producto.nombre }}</h3>
-            <p class="precio">Precio: ${{ "%.2f"|format(producto.precio) }}</p>
-            <p class="cantidad">Cantidad: {{ producto.cantidad }}</p>
-            <p class="categoria">Categoría: {{ producto.categoria }}</p>
-            <p class="fecha">Registro: {{ producto.fecha_registro.strftime('%d/%m/%Y') }}</p>
-            
-            <div class="producto-actions">
-                <a href="/producto/editar/{{ producto.id }}" class="btn-edit">✏️ Editar</a>
-                <a href="/producto/eliminar/{{ producto.id }}" class="btn-delete" onclick="return confirm('¿Estás seguro de eliminar este producto?')">🗑️ Eliminar</a>
-            </div>
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Inventario de Productos</h4>
+            <a href="{{ url_for('crear_producto') }}" class="btn btn-primary btn-sm">Nuevo Producto</a>
         </div>
-        {% endfor %}
-    {% else %}
-        <p class="no-data">No hay productos registrados en SQLite.</p>
-    {% endif %}
+        <div class="card-body">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Precio</th>
+                        <th>Stock</th>
+                        <th>Categoría</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in productos %}
+                    <tr>
+                        <td>{{ p.id_producto }}</td>
+                        <td><strong>{{ p.nombre }}</strong></td>
+                        <td>$ {{ p.precio }}</td>
+                        <td>
+                            {% if p.stock < 10 %}
+                                <span class="badge bg-danger">Bajo: {{ p.stock }}</span>
+                            {% else %}
+                                <span class="badge bg-success">{{ p.stock }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ p.categoria_rel.nombre_categoria }}</td>
+                        <td class="text-center">
+                            <a href="{{ url_for('editar_producto', id=p.id_producto) }}" class="btn btn-sm btn-outline-info">Editar</a>
+                            <a href="{{ url_for('eliminar_producto', id=p.id_producto) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Eliminar?')">Borrar</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 {% endblock %}

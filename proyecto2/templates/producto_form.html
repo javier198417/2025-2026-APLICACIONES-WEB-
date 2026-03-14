@@ -1,64 +1,58 @@
 {% extends "base.html" %}
 
-{% block title %}{{ 'Editar' if producto else 'Nuevo' }} Producto{% endblock %}
+{% block title %}
+    {{ 'Editar Producto' if producto else 'Nuevo Producto' }}
+{% endblock %}
 
 {% block content %}
-<h1>{{ 'Editar' if producto else 'Nuevo' }} Producto</h1>
+<div class="form-container">
+    <h1>{{ 'Editar Producto' if producto else 'Agregar Nuevo Producto' }}</h1>
+    <p>Completa los campos para gestionar tu inventario en MySQL</p>
 
-<form method="POST" class="producto-form">
-    {{ form.csrf_token }}
-    
-    <div class="form-group">
-        {{ form.nombre.label }}
-        {{ form.nombre }}
-        {% if form.nombre.errors %}
-            <ul class="errors">
-                {% for error in form.nombre.errors %}
-                    <li>{{ error }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    </div>
-    
-    <div class="form-group">
-        {{ form.precio.label }}
-        {{ form.precio }}
-        {% if form.precio.errors %}
-            <ul class="errors">
-                {% for error in form.precio.errors %}
-                    <li>{{ error }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    </div>
-    
-    <div class="form-group">
-        {{ form.cantidad.label }}
-        {{ form.cantidad }}
-        {% if form.cantidad.errors %}
-            <ul class="errors">
-                {% for error in form.cantidad.errors %}
-                    <li>{{ error }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    </div>
-    
-    <div class="form-group">
-        {{ form.categoria.label }}
-        {{ form.categoria }}
-        {% if form.categoria.errors %}
-            <ul class="errors">
-                {% for error in form.categoria.errors %}
-                    <li>{{ error }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    </div>
-    
-    <div class="form-actions">
-        {{ form.submit(class="btn btn-primary") }}
-        <a href="/productos" class="btn btn-cancel">Cancelar</a>
-    </div>
-</form>
+    {# CORRECCIÓN: Se eliminó el </form> prematuro de esta línea #}
+    <form method="POST" action="{{ url_for('editar_producto', id=producto.id_producto) if producto else url_for('crear_producto') }}">
+        
+        {# Protección CSRF de Flask-WTF #}
+        {{ form.hidden_tag() }}
+
+        <div class="form-group">
+            {{ form.nombre.label }}<br>
+            {{ form.nombre(class="form-control", placeholder="Ej. Laptop Gamer") }}
+            {% for error in form.nombre.errors %}
+                <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+
+        <div class="form-group">
+            {{ form.precio.label }}<br>
+            {{ form.precio(class="form-control", placeholder="0.00") }}
+            {% for error in form.precio.errors %}
+                <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+
+        <div class="form-group">
+            {# CORRECCIÓN: Se cambió 'cantidad' por 'stock' para que coincida con forms.py #}
+            {{ form.stock.label }}<br>
+            {{ form.stock(class="form-control", placeholder="Ej. 10") }}
+            {% for error in form.stock.errors %}
+                <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+
+        <div class="form-group">
+            {{ form.id_categoria.label }}<br>
+            {# Este campo ahora mostrará las categorías de tu tabla 'categorias' #}
+            {{ form.id_categoria(class="form-control") }}
+            {% for error in form.id_categoria.errors %}
+                <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+        </div>
+
+        <div class="form-actions" style="margin-top: 20px;">
+            {{ form.submit(class="btn btn-success") }}
+            <a href="{{ url_for('lista_productos') }}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
 {% endblock %}

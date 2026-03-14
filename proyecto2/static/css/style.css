@@ -405,4 +405,16 @@ body {
     .productos-grid {
         grid-template-columns: 1fr;
     }
+    .producto-card {
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 8px;
+    background: #f9f9f9;
+    margin-bottom: 10px;
+}
+.categoria {
+    font-weight: bold;
+    color: #555;
+    font-style: italic;
+}
 }

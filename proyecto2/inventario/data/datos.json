@@ -22,5 +22,29 @@
         "email": "roberto@email.com",
         "mensaje": "Información de envíos",
         "fecha": "2024-01-15 12:45:03"
+    },
+
+    [
+    {
+        "id": 101,
+        "nombre": "Cámara Sony Alpha",
+        "precio": 899.99,
+        "stock": 5,
+        "categoria": "Fotografía"
+    },
+    {
+        "id": 102,
+        "nombre": "Lente 50mm f/1.8",
+        "precio": 199.50,
+        "stock": 12,
+        "categoria": "Fotografía"
+    },
+    {
+        "id": 103,
+        "nombre": "Trípode Profesional",
+        "precio": 75.00,
+        "stock": 2,
+        "categoria": "Accesorios"
     }
+]
 ]

@@ -13,3 +13,8 @@ Email: carlos@email.com
 Mensaje: Pedido de 10 unidades
 Fecha: 2024-01-15 14:45:12
 --------------------------------------------------
+Actualización de Stock - Marzo 2026
+----------------------------------
+- Revisión de perchas completada.
+- Pendiente ingreso de facturas de tecnología.
+- Alerta: Stock bajo en Mouse Ergonómico.

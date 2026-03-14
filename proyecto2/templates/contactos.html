@@ -1,55 +1,43 @@
 {% extends "base.html" %}
 
-{% block title %}Contactos{% endblock %}
+{% block title %}Contáctanos{% endblock %}
 
 {% block content %}
-<h1>Formulario de Contacto</h1>
-<p>Este formulario guardará los datos en diferentes formatos según el botón que presiones.</p>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow border-0">
+                <div class="card-header bg-primary text-white text-center py-3">
+                    <h4 class="mb-0"><i class="fas fa-paper-plane me-2"></i>Enviar Mensaje</h4>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="mb-3">
+                            <label class="form-label font-weight-bold">Nombre Completo</label>
+                            {{ form.nombre(class="form-control", placeholder="Ej: Javier Pérez") }}
+                        </div>
 
-<div class="form-container">
-    <form method="POST" action="/guardar-txt" class="contact-form">
-        {{ form.csrf_token }}
-        <h2>Guardar en TXT</h2>
-        
-        <div class="form-group">
-            {{ form.nombre.label }}
-            {{ form.nombre }}
-            {% if form.nombre.errors %}
-                <ul class="errors">
-                    {% for error in form.nombre.errors %}
-                        <li>{{ error }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
+                        <div class="mb-3">
+                            <label class="form-label font-weight-bold">Correo Electrónico</label>
+                            {{ form.email(class="form-control", placeholder="nombre@ejemplo.com") }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label font-weight-bold">Tu Mensaje</label>
+                            {{ form.mensaje(class="form-control", rows="4", placeholder="¿En qué podemos ayudarte?") }}
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-save me-2"></i>Enviar y Guardar en CSV
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-        
-        <div class="form-group">
-            {{ form.email.label }}
-            {{ form.email }}
-            {% if form.email.errors %}
-                <ul class="errors">
-                    {% for error in form.email.errors %}
-                        <li>{{ error }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-        </div>
-        
-        <div class="form-group">
-            {{ form.mensaje.label }}
-            {{ form.mensaje }}
-            {% if form.mensaje.errors %}
-                <ul class="errors">
-                    {% for error in form.mensaje.errors %}
-                        <li>{{ error }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-        </div>
-        
-        {{ form.submit_txt(class="btn btn-txt") }}
-    </form>
-    
-    <!-- Similar para JSON y CSV -->
+    </div>
 </div>
 {% endblock %}

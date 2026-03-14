@@ -1,80 +1,98 @@
 {% extends "base.html" %}
 
-{% block title %}Datos en formato {{ formato }}{% endblock %}
+{% block title %}Visualización de Datos - {{ formato }}{% endblock %}
 
 {% block content %}
-<h1>Datos almacenados en formato {{ formato }}</h1>
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">
+                <i class="fas fa-database me-2"></i> 
+                Datos en formato: <span class="badge bg-info text-dark">{{ formato }}</span>
+            </h4>
+            <a href="{{ url_for('index') }}" class="btn btn-sm btn-outline-light">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+        </div>
+        <div class="card-body">
+            
+            {% if formato == 'TXT' %}
+                <div class="bg-light p-4 border rounded">
+                    <pre class="mb-0">{% for linea in datos %}{{ linea }}
+{% endfor %}</pre>
+                </div>
 
-<div class="datos-container">
-    {% if datos %}
-        {% if formato == 'TXT' %}
-            <div class="txt-viewer">
-                {% for linea in datos %}
-                    <p>{{ linea }}</p>
-                {% endfor %}
-            </div>
-        
-        {% elif formato == 'JSON' %}
-            <div class="json-viewer">
-                {% for registro in datos %}
-                    <div class="json-item">
-                        <p><strong>Nombre:</strong> {{ registro.nombre }}</p>
-                        <p><strong>Email:</strong> {{ registro.email }}</p>
-                        <p><strong>Mensaje:</strong> {{ registro.mensaje }}</p>
-                        <p><strong>Fecha:</strong> {{ registro.fecha }}</p>
-                        <hr>
-                    </div>
-                {% endfor %}
-            </div>
-        
-        {% elif formato == 'CSV' %}
-            <div class="csv-viewer">
-                <table class="data-table">
-                    {% for fila in datos %}
-                        <tr>
-                            {% for celda in fila %}
-                                <td>{{ celda }}</td>
+            {% elif formato == 'CSV' %}
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover align-middle">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Email</th>
+                                <th>Mensaje</th>
+                                <th>Fecha</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for fila in datos %}
+                            {% if loop.index > 1 %} {# Saltamos el encabezado del CSV #}
+                            <tr>
+                                <td><strong>{{ fila[0] }}</strong></td>
+                                <td>{{ fila[1] }}</td>
+                                <td>{{ fila[2] }}</td>
+                                <td><small class="text-muted">{{ fila[3] }}</small></td>
+                            </tr>
+                            {% endif %}
                             {% endfor %}
-                        </tr>
-                    {% endfor %}
-                </table>
-            </div>
-        
-        {% elif formato == 'SQLite' %}
-            <div class="sqlite-viewer">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Precio</th>
-                            <th>Cantidad</th>
-                            <th>Categoría</th>
-                            <th>Fecha Registro</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for producto in datos %}
-                        <tr>
-                            <td>{{ producto.id }}</td>
-                            <td>{{ producto.nombre }}</td>
-                            <td>${{ "%.2f"|format(producto.precio) }}</td>
-                            <td>{{ producto.cantidad }}</td>
-                            <td>{{ producto.categoria }}</td>
-                            <td>{{ producto.fecha_registro.strftime('%d/%m/%Y %H:%M') }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        {% endif %}
-    {% else %}
-        <p class="no-data">No hay datos disponibles en formato {{ formato }}</p>
-    {% endif %}
-    
-    <div class="actions">
-        <a href="/contactos" class="btn">Volver a Contactos</a>
-        <a href="/productos" class="btn">Volver a Productos</a>
+                        </tbody>
+                    </table>
+                </div>
+
+            {% elif formato == 'JSON' or formato == 'MySQL' %}
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead class="table-secondary">
+                            <tr>
+                                <th>ID / Referencia</th>
+                                <th>Nombre / Descripción</th>
+                                <th>Valor / Precio</th>
+                                <th>Estado / Stock</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in datos %}
+                            <tr>
+                                <td>{{ item.id if item.id else item.id_producto }}</td>
+                                <td>{{ item.nombre }}</td>
+                                <td>
+                                    {% if item.precio %}
+                                        <span class="text-success">$ {{ item.precio }}</span>
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if item.stock is defined %}
+                                        {% if item.stock < 5 %}
+                                            <span class="badge bg-danger">Bajo: {{ item.stock }}</span>
+                                        {% else %}
+                                            <span class="badge bg-success">Disponible: {{ item.stock }}</span>
+                                        {% endif %}
+                                    {% else %}
+                                        <span class="text-muted">No aplica</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+
+        </div>
+        <div class="card-footer text-muted small text-end">
+            Sistema sincronizado correctamente con el servidor.
+        </div>
     </div>
 </div>
 {% endblock %}
