@@ -19,6 +19,15 @@
                 <li><a href="/leer-csv">Ver CSV</a></li>
                 <li><a href="/leer-sqlite">Ver SQLite</a></li>
             </ul>
+            <ul class="nav-menu-right">
+                {% if current_user.is_authenticated %}
+                    <li><span class="user-greeting">Hola, {{ current_user.nombre }}</span></li>
+                    <li><a href="{{ url_for('logout') }}">Cerrar sesión</a></li>
+                {% else %}
+                    <li><a href="{{ url_for('login') }}">Iniciar sesión</a></li>
+                    <li><a href="{{ url_for('registro') }}">Registro</a></li>
+                {% endif %}
+            </ul>
         </div>
     </nav>
 

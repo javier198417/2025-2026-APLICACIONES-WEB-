@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, EmailField, TextAreaField, FloatField, IntegerField, SelectField, SubmitField
-from wtforms.validators import DataRequired, Email, Length, NumberRange, Optional
+from wtforms import StringField, EmailField, TextAreaField, FloatField, IntegerField, SelectField, SubmitField, PasswordField
+from wtforms.validators import DataRequired, Email, Length, NumberRange, Optional, EqualTo
 
 class ContactoForm(FlaskForm):
     """ Formulario para contacto/guardar en archivos """
@@ -52,7 +52,6 @@ class ProductoForm(FlaskForm):
         render_kw={"placeholder": "0.00", "step": "0.01"}
     )
     
-    # CAMBIO: Se renombró 'cantidad' a 'stock' para coincidir con el modelo Producto
     stock = IntegerField(
         'Stock / Cantidad',
         validators=[
@@ -70,4 +69,61 @@ class ProductoForm(FlaskForm):
     
     submit = SubmitField('Guardar Producto')
 
-# ... Resto de formularios (BusquedaForm, ReporteForm) se mantienen igual ...
+class RegistroForm(FlaskForm):
+    """ Formulario para registro de nuevos usuarios """
+    nombre = StringField(
+        'Nombre',
+        validators=[
+            DataRequired(message='El nombre es obligatorio'),
+            Length(min=2, max=100, message='El nombre debe tener entre 2 y 100 caracteres')
+        ],
+        render_kw={"placeholder": "Tu nombre completo"}
+    )
+    
+    email = EmailField(
+        'Email',
+        validators=[
+            DataRequired(message='El email es obligatorio'),
+            Email(message='Ingresa un email válido')
+        ],
+        render_kw={"placeholder": "correo@ejemplo.com"}
+    )
+    
+    password = PasswordField(
+        'Contraseña',
+        validators=[
+            DataRequired(message='La contraseña es obligatoria'),
+            Length(min=6, message='La contraseña debe tener al menos 6 caracteres')
+        ],
+        render_kw={"placeholder": "********"}
+    )
+    
+    confirm_password = PasswordField(
+        'Confirmar Contraseña',
+        validators=[
+            DataRequired(message='Debes confirmar la contraseña'),
+            EqualTo('password', message='Las contraseñas deben coincidir')
+        ],
+        render_kw={"placeholder": "********"}
+    )
+    
+    submit = SubmitField('Registrarse')
+
+class LoginForm(FlaskForm):
+    """ Formulario para inicio de sesión """
+    email = EmailField(
+        'Email',
+        validators=[
+            DataRequired(message='El email es obligatorio'),
+            Email(message='Ingresa un email válido')
+        ],
+        render_kw={"placeholder": "correo@ejemplo.com"}
+    )
+    
+    password = PasswordField(
+        'Contraseña',
+        validators=[DataRequired(message='La contraseña es obligatoria')],
+        render_kw={"placeholder": "********"}
+    )
+    
+    submit = SubmitField('Iniciar Sesión')
