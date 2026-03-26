@@ -44,7 +44,6 @@ class Usuario(db.Model, UserMixin):
     def check_password(self, password):
         return check_password_hash(self.password, password)
 
-# --- CORREGIDO: user_loader fuera de la clase ---
 @login_manager.user_loader
 def load_user(user_id):
     return Usuario.query.get(int(user_id))
@@ -59,13 +58,39 @@ class Producto(db.Model):
     __tablename__ = 'productos'
     id_producto = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(100), nullable=False)
+    descripcion = db.Column(db.Text)                    # NUEVO CAMPO
     precio = db.Column(db.Float, nullable=False)
     stock = db.Column(db.Integer, default=0)
     id_categoria = db.Column(db.Integer, db.ForeignKey('categorias.id_categoria'))
     fecha_registro = db.Column(db.DateTime, default=datetime.utcnow)
 
+# NUEVOS MODELOS PARA CLIENTES, FACTURAS Y DETALLE
+class Cliente(db.Model):
+    __tablename__ = 'clientes'
+    id_cliente = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(100), unique=True)
+    telefono = db.Column(db.String(20))
+    facturas = db.relationship('Factura', backref='cliente', lazy=True)
+
+class Factura(db.Model):
+    __tablename__ = 'facturas'
+    id_factura = db.Column(db.Integer, primary_key=True)
+    id_cliente = db.Column(db.Integer, db.ForeignKey('clientes.id_cliente'), nullable=False)
+    fecha = db.Column(db.Date, default=datetime.utcnow)
+    total = db.Column(db.Numeric(10,2), nullable=False)
+
+class DetalleFactura(db.Model):
+    __tablename__ = 'detalle_factura'
+    id_detalle = db.Column(db.Integer, primary_key=True)
+    id_factura = db.Column(db.Integer, db.ForeignKey('facturas.id_factura'), nullable=False)
+    id_producto = db.Column(db.Integer, db.ForeignKey('productos.id_producto'), nullable=False)
+    cantidad = db.Column(db.Integer, nullable=False)
+    precio_unitario = db.Column(db.Numeric(10,2), nullable=False)
+    subtotal = db.Column(db.Numeric(10,2), db.Computed('cantidad * precio_unitario'))
+
 # ==========================================
-# RUTAS PÚBLICAS
+# RUTAS PÚBLICAS (sin autenticación)
 # ==========================================
 
 @app.route('/')
@@ -74,6 +99,7 @@ def index():
 
 @app.route('/contactos', methods=['GET', 'POST'])
 def contactos():
+    # ... (código original sin cambios) ...
     form = ContactoForm()
     if form.validate_on_submit():
         nombre = form.nombre.data
@@ -100,6 +126,7 @@ def contactos():
 
 @app.route('/registro', methods=['GET', 'POST'])
 def registro():
+    # ... (código original sin cambios) ...
     if current_user.is_authenticated:
         return redirect(url_for('index'))
     form = RegistroForm()
@@ -123,6 +150,7 @@ def registro():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    # ... (código original sin cambios) ...
     if current_user.is_authenticated:
         return redirect(url_for('index'))
     form = LoginForm()
@@ -145,7 +173,7 @@ def logout():
     return redirect(url_for('index'))
 
 # ==========================================
-# RUTAS PROTEGIDAS (solo para usuarios autenticados)
+# RUTAS PROTEGIDAS (CRUD original con WTForms)
 # ==========================================
 
 @app.route('/productos')
@@ -157,6 +185,7 @@ def lista_productos():
 @app.route('/producto/nuevo', methods=['GET', 'POST'])
 @login_required
 def crear_producto():
+    # ... (código original sin cambios) ...
     form = ProductoForm()
     categorias = Categoria.query.all()
     form.id_categoria.choices = [(c.id_categoria, c.nombre_categoria) for c in categorias]
@@ -178,6 +207,7 @@ def crear_producto():
 @app.route('/producto/editar/<int:id>', methods=['GET', 'POST'])
 @login_required
 def editar_producto(id):
+    # ... (código original sin cambios) ...
     producto = Producto.query.get_or_404(id)
     form = ProductoForm(obj=producto)
     form.id_categoria.choices = [(c.id_categoria, c.nombre_categoria) for c in Categoria.query.all()]
@@ -196,17 +226,21 @@ def editar_producto(id):
 @app.route('/producto/eliminar/<int:id>')
 @login_required
 def eliminar_producto(id):
+    # ... (código original sin cambios) ...
     producto = Producto.query.get_or_404(id)
     db.session.delete(producto)
     db.session.commit()
     flash('Producto eliminado correctamente', 'warning')
     return redirect(url_for('lista_productos'))
 
-# --- RUTAS DE LECTURA DE ARCHIVOS (protegidas) ---
+# ==========================================
+# RUTAS DE LECTURA DE ARCHIVOS (protegidas)
+# ==========================================
 
 @app.route('/leer-txt')
 @login_required
 def leer_txt():
+    # ... (código original sin cambios) ...
     datos = []
     ruta = os.path.join('inventario', 'data', 'datos.txt')
     if os.path.exists(ruta):
@@ -217,6 +251,7 @@ def leer_txt():
 @app.route('/leer-json')
 @login_required
 def leer_json():
+    # ... (código original sin cambios) ...
     datos = []
     ruta = os.path.join('inventario', 'data', 'datos.json')
     if os.path.exists(ruta):
@@ -230,6 +265,7 @@ def leer_json():
 @app.route('/leer-csv')
 @login_required
 def leer_csv():
+    # ... (código original sin cambios) ...
     datos = []
     ruta = os.path.join('inventario', 'data', 'datos.csv')
     if os.path.exists(ruta):
@@ -241,8 +277,99 @@ def leer_csv():
 @app.route('/leer-sqlite')
 @login_required
 def leer_sqlite():
+    # Nota: Esta función ahora lee desde MySQL, pero mantiene el nombre original
     datos = Producto.query.all()
     return render_template('datos.html', datos=datos, formato='MySQL')
+
+# ==========================================
+# NUEVO CRUD PARA PRODUCTOS (con formularios HTML simples)
+# ==========================================
+
+@app.route('/productos-mysql')
+@login_required
+def listar_productos_mysql():
+    """Lista todos los productos (versión con botones editar/eliminar)"""
+    productos = Producto.query.all()
+    return render_template('productos_mysql.html', productos=productos)
+
+@app.route('/productos-mysql/crear', methods=['GET', 'POST'])
+@login_required
+def crear_producto_mysql():
+    if request.method == 'POST':
+        nombre = request.form['nombre']
+        descripcion = request.form.get('descripcion')
+        precio = request.form['precio']
+        stock = request.form['stock']
+        id_categoria = request.form.get('id_categoria') or None
+
+        nuevo_producto = Producto(
+            nombre=nombre,
+            descripcion=descripcion,
+            precio=precio,
+            stock=stock,
+            id_categoria=id_categoria
+        )
+        db.session.add(nuevo_producto)
+        db.session.commit()
+        flash('Producto creado exitosamente', 'success')
+        return redirect(url_for('listar_productos_mysql'))
+
+    categorias = Categoria.query.all()
+    return render_template('crear.html', categorias=categorias)
+
+@app.route('/productos-mysql/editar/<int:id>', methods=['GET', 'POST'])
+@login_required
+def editar_producto_mysql(id):
+    producto = Producto.query.get_or_404(id)
+    if request.method == 'POST':
+        producto.nombre = request.form['nombre']
+        producto.descripcion = request.form.get('descripcion')
+        producto.precio = request.form['precio']
+        producto.stock = request.form['stock']
+        producto.id_categoria = request.form.get('id_categoria') or None
+        db.session.commit()
+        flash('Producto actualizado correctamente', 'success')
+        return redirect(url_for('listar_productos_mysql'))
+
+    categorias = Categoria.query.all()
+    return render_template('editar.html', producto=producto, categorias=categorias)
+
+@app.route('/productos-mysql/eliminar/<int:id>', methods=['POST'])
+@login_required
+def eliminar_producto_mysql(id):
+    producto = Producto.query.get_or_404(id)
+    db.session.delete(producto)
+    db.session.commit()
+    flash('Producto eliminado permanentemente', 'danger')
+    return redirect(url_for('listar_productos_mysql'))
+
+@app.route('/productos-mysql/eliminar/<int:id>', methods=['GET'])
+@login_required
+def confirmar_eliminar_mysql(id):
+    producto = Producto.query.get_or_404(id)
+    return render_template('eliminar.html', producto=producto)
+
+# ==========================================
+# RUTAS PARA CATEGORÍAS, CLIENTES Y FACTURAS (básicas)
+# ==========================================
+
+@app.route('/categorias-mysql')
+@login_required
+def listar_categorias():
+    categorias = Categoria.query.all()
+    return render_template('listado_generico.html', items=categorias, titulo="Categorías", campos=['id_categoria', 'nombre_categoria'])
+
+@app.route('/clientes-mysql')
+@login_required
+def listar_clientes():
+    clientes = Cliente.query.all()
+    return render_template('listado_generico.html', items=clientes, titulo="Clientes", campos=['id_cliente', 'nombre', 'email', 'telefono'])
+
+@app.route('/facturas-mysql')
+@login_required
+def listar_facturas():
+    facturas = Factura.query.all()
+    return render_template('listado_generico.html', items=facturas, titulo="Facturas", campos=['id_factura', 'cliente.nombre', 'fecha', 'total'])
 
 # ==========================================
 # INICIALIZACIÓN
@@ -254,6 +381,11 @@ with app.app_context():
         if not Categoria.query.first():
             cat_inicial = Categoria(nombre_categoria="General")
             db.session.add(cat_inicial)
+            db.session.commit()
+        if not Cliente.query.first():
+            # Cliente de ejemplo
+            cliente_ejemplo = Cliente(nombre="Cliente Ejemplo", email="ejemplo@correo.com", telefono="123456789")
+            db.session.add(cliente_ejemplo)
             db.session.commit()
         print("✅ Sistema sincronizado correctamente con MySQL.")
     except Exception as e:

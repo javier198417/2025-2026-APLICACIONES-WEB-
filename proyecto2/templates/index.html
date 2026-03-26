@@ -12,25 +12,29 @@
     <div class="feature-card">
         <h3>Archivos TXT</h3>
         <p>Persistencia básica con archivos de texto plano</p>
-        <a href="/contactos" class="btn">Probar TXT</a>
+        <!-- Enlace a la ruta que muestra el contenido del archivo TXT -->
+        <a href="{{ url_for('leer_txt') }}" class="btn">Probar TXT</a>
     </div>
     
     <div class="feature-card">
         <h3>Archivos JSON</h3>
         <p>Almacenamiento estructurado con formato JSON</p>
-        <a href="/contactos" class="btn">Probar JSON</a>
+        <!-- Enlace a la ruta que muestra el contenido del archivo JSON -->
+        <a href="{{ url_for('leer_json') }}" class="btn">Probar JSON</a>
     </div>
     
     <div class="feature-card">
         <h3>Archivos CSV</h3>
         <p>Datos tabulares en formato CSV</p>
-        <a href="/contactos" class="btn">Probar CSV</a>
+        <!-- Enlace a la ruta que muestra el contenido del archivo CSV -->
+        <a href="{{ url_for('leer_csv') }}" class="btn">Probar CSV</a>
     </div>
     
     <div class="feature-card">
         <h3>SQLite + SQLAlchemy</h3>
         <p>Base de datos relacional con ORM</p>
-        <a href="/productos" class="btn">Gestionar Productos</a>
+        <!-- Enlace al CRUD completo de productos (MySQL) con confirmación de eliminación -->
+        <a href="{{ url_for('listar_productos_mysql') }}" class="btn">Gestionar Productos</a>
     </div>
 </div>
 
@@ -40,8 +44,8 @@
         <li>✅ Persistencia con archivos TXT usando open()</li>
         <li>✅ Persistencia con archivos JSON usando librería json</li>
         <li>✅ Persistencia con archivos CSV usando librería csv</li>
-        <li>✅ Base de datos SQLite con SQLAlchemy ORM</li>
-        <li>✅ CRUD completo para productos</li>
+        <li>✅ Base de datos MySQL con SQLAlchemy ORM</li>
+        <li>✅ CRUD completo para productos (crear, leer, actualizar, eliminar con confirmación)</li>
         <li>✅ Visualización de datos desde diferentes fuentes</li>
     </ul>
 </div>

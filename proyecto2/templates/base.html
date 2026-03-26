@@ -5,6 +5,57 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Sistema de Inventario{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        /* Estilos mínimos para el submenú desplegable */
+        .nav-menu li {
+            position: relative;
+            list-style: none;
+        }
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: #333;
+            min-width: 200px;
+            z-index: 1000;
+            padding: 0;
+            margin: 0;
+            border-radius: 4px;
+        }
+        .dropdown-menu li {
+            display: block;
+        }
+        .dropdown-menu li a {
+            padding: 10px 15px;
+            display: block;
+            color: white;
+            text-decoration: none;
+        }
+        .dropdown-menu li a:hover {
+            background-color: #555;
+        }
+        .nav-menu li:hover .dropdown-menu {
+            display: block;
+        }
+        /* Ajustes para mantener el estilo existente */
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav-menu, .nav-menu-right {
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+        .nav-menu li, .nav-menu-right li {
+            margin: 0 10px;
+        }
+        .user-greeting {
+            color: #fff;
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar">
@@ -18,6 +69,16 @@
                 <li><a href="/leer-json">Ver JSON</a></li>
                 <li><a href="/leer-csv">Ver CSV</a></li>
                 <li><a href="/leer-sqlite">Ver SQLite</a></li>
+                <!-- Nuevo menú desplegable para Inventario MySQL -->
+                <li>
+                    <a href="#">Inventario MySQL ▼</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{{ url_for('listar_productos_mysql') }}">Productos</a></li>
+                        <li><a href="{{ url_for('listar_categorias') }}">Categorías</a></li>
+                        <li><a href="{{ url_for('listar_clientes') }}">Clientes</a></li>
+                        <li><a href="{{ url_for('listar_facturas') }}">Facturas</a></li>
+                    </ul>
+                </li>
             </ul>
             <ul class="nav-menu-right">
                 {% if current_user.is_authenticated %}

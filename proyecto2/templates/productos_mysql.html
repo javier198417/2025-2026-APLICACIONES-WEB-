@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Productos (MySQL){% endblock %}
+{% block content %}
+<h1>Productos (Inventario MySQL)</h1>
+<a href="{{ url_for('crear_producto_mysql') }}" class="btn btn-primary mb-3">Nuevo Producto</a>
+<table class="table table-striped">
+    <thead>
+         <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Precio</th>
+            <th>Stock</th>
+            <th>Categoría</th>
+            <th>Fecha Registro</th>
+            <th>Acciones</th>
+         </tr>
+    </thead>
+    <tbody>
+        {% for p in productos %}
+        <tr>
+            <td>{{ p.id_producto }}</td>
+            <td>{{ p.nombre }}</td>
+            <td>{{ p.descripcion }}</td>
+            <td>${{ p.precio }}</td>
+            <td>{{ p.stock }}</td>
+            <td>{{ p.categoria_rel.nombre_categoria if p.categoria_rel else 'Sin categoría' }}</td>
+            <td>{{ p.fecha_registro.strftime('%Y-%m-%d') }}</td>
+            <td>
+                <a href="{{ url_for('editar_producto_mysql', id=p.id_producto) }}" class="btn btn-sm btn-warning">Editar</a>
+                <a href="{{ url_for('confirmar_eliminar_mysql', id=p.id_producto) }}" class="btn btn-sm btn-danger">Eliminar</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

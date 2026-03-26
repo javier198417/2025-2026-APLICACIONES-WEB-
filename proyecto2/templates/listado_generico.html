@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}{{ titulo }}{% endblock %}
+{% block content %}
+<h1>{{ titulo }}</h1>
+<table class="table table-striped">
+    <thead>
+         <tr>
+            {% for campo in campos %}
+                <th>{{ campo.replace('_', ' ').title() }}</th>
+            {% endfor %}
+         </tr>
+    </thead>
+    <tbody>
+        {% for item in items %}
+        <tr>
+            {% for campo in campos %}
+                <td>
+                    {% if '.' in campo %}
+                        {% set partes = campo.split('.') %}
+                        {{ item[partes[0]][partes[1]] }}
+                    {% else %}
+                        {{ item[campo] }}
+                    {% endif %}
+                </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
